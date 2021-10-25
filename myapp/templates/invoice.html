@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block body %}
+
+
+
+<div class="row">
+
+
+    <div class="col-6">
+        <h2>Candidate Invoice</h2>
+             <form class="text-center" action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-primary">
+        </form>
+
+    </div>
+</div>
+
+
+
+{% endblock %}
