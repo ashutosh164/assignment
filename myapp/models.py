@@ -19,12 +19,12 @@ class Enrollment(models.Model):
     date_of_joining = models.DateField(auto_now=False)
 
     def __str__(self):
-        return f'{self.candidate_name} -- {self.course_name}'
+        return f'{self.candidate_name} -- {self.id}'
 
 
 class Invoice(models.Model):
-    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    enrollment_id = models.IntegerField()
+    candidate = models.CharField(max_length=200, null=True, blank=True)
+    enrollment_id = models.IntegerField(null=True, blank=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
     date = models.DateField(auto_now=False)
     reason = models.CharField(max_length=500, blank=True)

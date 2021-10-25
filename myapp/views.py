@@ -4,6 +4,10 @@ from .form import StudentRegister, CoursesAssign, InvoiceForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
+from django.conf import settings
+from django.core.mail import send_mail
+from django.utils import timezone
+
 
 
 def index(request):
@@ -67,13 +71,35 @@ def assign(request):
 
 
 def invoice(request):
-    student = Candidate.objects.all()
+    # student = Candidate.objects.all()
+    enrol = Enrollment.objects.all()
     form = InvoiceForm()
     if request.method == 'POST':
         form = InvoiceForm(request.POST)
         if form.is_valid():
-            form.save()
+            inv = form.save()
+            subject = 'Assignment-Submission'
+            message = f'Hi {inv.candidate}I hope you’re well.' \
+                      f' We have yet to receive payment of {inv.amount} for invoice number' \
+                      f' 001 for enrollment_id- {inv.enrollment_id}, which was due on ' \
+                      f'{timezone.now()}. Please let us know when we can expect to receive payment, ' \
+                      'and don’t hesitate to reach out if you have any questions or concerns.'
+            email_from = settings.EMAIL_HOST_USER
+            student = Candidate.email
+            recipent_list = [student, ]
+            # send_mail(subject, message, email_from, recipent_list)
             return redirect('index')
 
-    context = {'form':form, 'student':student}
+    context = {'form':form, 'enrol':enrol}
     return render(request,'invoice.html', context)
+
+
+
+
+
+
+
+
+
+
+
