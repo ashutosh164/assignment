@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from .models import *
 from .form import StudentRegister, CoursesAssign, InvoiceForm
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
 
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 
 def index(request):
@@ -88,7 +91,25 @@ def invoice(request):
             student = Candidate.email
             recipent_list = [student, ]
             # send_mail(subject, message, email_from, recipent_list)
-            return redirect('index')
+
+            template_path = 'pdf1.html'
+            context = {'myvar': f"Hi {inv.candidate}I hope you’re well.' \
+                      f' We have yet to receive payment of {inv.amount} for invoice number' \
+                      f' 001 for enrollment_id- {inv.enrollment_id}, which was due on ' \
+                      f'{timezone.now()}. Please let us know when we can expect to receive payment, ' \
+                      'and don’t hesitate to reach out if you have any questions or concerns.'"}
+            response = HttpResponse(content_type='application/myapp')
+
+            response['Content-Disposition'] = 'filename="report.pdf"'
+
+            template = get_template(template_path)
+            html = template.render(context)
+
+            pisa_status = pisa.CreatePDF(
+                html, dest=response)
+            if pisa_status.err:
+                return HttpResponse('We had some errors <pre>' + html + '</pre>')
+            return response
 
     context = {'form':form, 'enrol':enrol}
     return render(request,'invoice.html', context)

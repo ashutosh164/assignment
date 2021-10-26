@@ -14,7 +14,6 @@
 
 <nav class="navbar navbar-light bg-primary">
   <div class="container-fluid">
-<!--    <a class="navbar-brand" href="{% url 'AddStudent' %}">Add Student</a>-->
       {% if user.is_authenticated %}
         <div>
             <a class="navbar-brand" href="{% url 'index' %}">home</a>
